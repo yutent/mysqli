@@ -23,12 +23,13 @@ function parseWhere(arr){
             it.join = it.join || 'AND'
             it.op = it.op || '='
             
+            let fixVal = it.val
             if(!/(^\(SELECT\s+.*\)$)|^`/.test(it.val) && !['IN', 'BETWEEN'].includes(it.op)){
                 
-                it.val = mysql.escape(it.val)
+                fixVal = mysql.escape(it.val)
             }
             
-            where += `${it.join.toUpperCase()} ${it.key} ${it.op} ${it.val} `
+            where += `${it.join.toUpperCase()} ${it.key} ${it.op} ${fixVal} `
         }
 
         where = ' WHERE ' + where.trim().replace(/^(AND|OR)/, ' ') + ' '
