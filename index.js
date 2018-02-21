@@ -73,6 +73,8 @@ class Mysqli {
           }
           defer.resolve(conn)
         })
+      } else {
+        defer.resolve(conn)
       }
     })
     return new Method(defer.promise)
