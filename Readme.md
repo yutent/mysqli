@@ -2,11 +2,7 @@
 
 # mysqli
 
-> 本模块基于 node-mysql 模块二次封装，对基础的增删改查，主从库等按 js 的特点进行
-> 了简化，并对 SQL 注入进行安全过滤，让没有 SQL 基础的人，也能顺利使用 ; 当然，
-> 一些复杂的查询，以及事务等，这些不在我的服务之内，而且会用到这些功能的童鞋，本
-> 身也有一定的 SQL 基础了 ; 所以，这类童鞋，请自行使用各自习惯的 SQL 模块，或手
-> 写实现。
+> 本模块基于 node-mysql 模块二次封装，将SQL语法转为类似MongoDB的API。对常用的增删改查提供了简单的API, 并且进行了SQL注入过滤, 对新手非常友好。
 
 ## 使用 npm 安装
 
@@ -16,7 +12,7 @@ npm install mysqli
 
 ## 实例化
 
-> 实例化可以传 2 种格式的配置，1 是 json 对象，2 是数组。只有一个数据库时，默认
+> 实例化可以传入一个数组,或单个object配置。只有一个数据库时，默认
 > 是主库 ; 多于 1 个数据库服务时，自动以第 1 个为主库，其他的从库，故实例化时
 > ，`注意顺序`。
 
@@ -74,7 +70,7 @@ Mysqli.escape('这是文本')
 
 > 触发一个数据库实例 , 可接受 2 个参数 , 第 1 个为 " 是否从库 ", 第 2 个为 " 数
 > 据库名称 "
-
+>  `这一步是必须要的, `
 ```javascript
 const Mysqli = require('mysqli')
 let conn = new Mysqli({
@@ -121,7 +117,7 @@ db.query(`select * from users limit 10`).then(row => {
 })
 ```
 
-### 6. filter(condition, select)
+### 6. find(condition, select)
 
 * condition `<Object>`, 查询条件
 * select `<Array>`, 要返回字段 , 默认全部返回
@@ -131,18 +127,10 @@ db.query(`select * from users limit 10`).then(row => {
 
 ```javascript
 db
-  .filter(
+  .find(
     {
       table: '', // 要查询的表
-      where: [
-        {
-          //数组格式,可以组成多个条件,默认查询全表 【可选】
-          join: 'OR', //条件关系 AND, OR
-          op: '>', //关系符,如 =, >, <, <=, >=
-          key: 'aa',
-          val: 23
-        }
-      ],
+      where: {foo: 'bar', goo: {$like: 'hello%'}}, //条件, 语法类似mongodb
       sort: {
         //排序, key是要排序的字段,value是排序方式, 1顺序,-1逆序 【可选】
         a: 1,
@@ -150,14 +138,14 @@ db
       },
       limit: [0, 1] // 查询范围,可用于分页 【可选】
     },
-    ['a', 'b']
+    ['id', 'name'] //要select的字段
   )
   .then(row => {
     console.log(row)
   })
 ```
 
-### 7. filterOne(condition)
+### 7. findOne(condition)
 
 * condition `<Object>`
 
