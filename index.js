@@ -59,25 +59,8 @@ class Mysqli {
   }
 
   emit(fromSlave = false, db) {
-    const defer = Promise.defer()
     const slave = fromSlave && this.useSlaveDB ? 'SLAVE*' : 'MASTER'
-
-    this.pool.getConnection(slave, (err, conn) => {
-      if (err) {
-        return defer.reject({ err: `MySQL connect ${err}`, sql: '' })
-      }
-      if (db) {
-        conn.query('USE ' + db, err => {
-          if (err) {
-            return defer.reject({ err: 'Select DB ' + err, sql: '' })
-          }
-          defer.resolve(conn)
-        })
-      } else {
-        defer.resolve(conn)
-      }
-    })
-    return new Method(defer.promise)
+    return new Method(this.pool, slave, db)
   }
 }
 
