@@ -64,12 +64,12 @@ class Mysqli {
 
     this.pool.getConnection(slave, (err, conn) => {
       if (err) {
-        return defer.reject(`MySQL connect ${err}`)
+        return defer.reject({ err: `MySQL connect ${err}`, sql: '' })
       }
       if (db) {
         conn.query('USE ' + db, err => {
           if (err) {
-            return defer.reject('Select DB ' + err)
+            return defer.reject({ err: 'Select DB ' + err, sql: '' })
           }
           defer.resolve(conn)
         })
