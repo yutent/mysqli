@@ -30,7 +30,10 @@ class Mysqli {
 
     //是否有从库
     this.useSlaveDB = config.length > 1
-    this.pool = mysql.createPoolCluster()
+    this.pool = mysql.createPoolCluster({
+      removeNodeErrorCount: 1, // 连续失败立即从节点中移除, 并在10秒后尝试恢复
+      restoreNodeTimeout: 10000
+    })
 
     config.forEach((item, i) => {
       let { host, port, user, charset, passwd: password, db: database } = item
