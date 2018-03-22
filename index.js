@@ -63,7 +63,9 @@ class Mysqli {
         charset,
         collate,
         password,
-        database
+        database,
+        timezone,
+        supportBigNumbers
       })
     })
     return this
