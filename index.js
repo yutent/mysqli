@@ -36,12 +36,25 @@ class Mysqli {
     })
 
     config.forEach((item, i) => {
-      let { host, port, user, charset, passwd: password, db: database } = item
+      let {
+        host,
+        port,
+        user,
+        charset,
+        passwd: password,
+        db: database,
+        timezone,
+        supportBigNumbers
+      } = item
       let name = i < 1 ? 'MASTER' : 'SLAVE' + i
+      let collate
 
       charset = charset || 'utf8'
-      let collate =
+      collate =
         charset + (charset === 'utf8mb4' ? '_unicode_ci' : '_general_ci')
+
+      timezone = timezone || 'local'
+      supportBigNumbers = !!supportBigNumbers
 
       this.pool.add(name, {
         host,
