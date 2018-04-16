@@ -6,7 +6,7 @@
  */
 const { escape } = require('mysql')
 
-function getType(val) {
+function getType(val: any): string {
   if (val === null) {
     return String(val)
   }
@@ -15,7 +15,7 @@ function getType(val) {
     .slice(8, -1)
     .toLowerCase()
 }
-function parse$or(arr) {
+function parse$or(arr: any[]) {
   let sql = ''
   for (let it of arr) {
     sql += '('
@@ -29,7 +29,7 @@ function parse$or(arr) {
   sql = sql.slice(0, -3)
   return sql
 }
-function parse$and(arr) {
+function parse$and(arr: any[]) {
   let sql = ''
   for (let it of arr) {
     sql += '('
@@ -44,7 +44,7 @@ function parse$and(arr) {
   return sql
 }
 
-function parse$opt(opt) {
+function parse$opt(opt: { [prop: string]: any }) {
   let sql = ''
   for (let k in opt) {
     let tmp = opt[k]
@@ -60,7 +60,7 @@ function parse$opt(opt) {
         }
 
         if (tmp.$in) {
-          let list = tmp.$in.map(it => {
+          let list = tmp.$in.map((it: any) => {
             return escape(it)
           })
           sql += ` ${k} IN (${list.join(',')}) `
@@ -70,7 +70,7 @@ function parse$opt(opt) {
           if (tmp.$between.length < 2) {
             throw new Error(`Array $between's length must be 2.`)
           }
-          let list = tmp.$between.map(it => {
+          let list = tmp.$between.map((it: any) => {
             return escape(it)
           })
           sql += ` ${k} BETWEEN ${list[0]} AND ${list[1]} `
@@ -102,8 +102,8 @@ function parse$opt(opt) {
   return sql
 }
 
-const Parser = {
-  leftJoin(tables) {
+export const parser = {
+  leftJoin(tables: any[]) {
     let sql = ''
     for (let it of tables) {
       sql += ` LEFT JOIN ${it.table} ON ${it.on} `
@@ -111,7 +111,7 @@ const Parser = {
     return sql
   },
 
-  rightJoin(tables) {
+  rightJoin(tables: any[]) {
     let sql = ''
     for (let it of tables) {
       sql += ` RIGHT JOIN ${it.table} ON ${it.on} `
@@ -119,7 +119,7 @@ const Parser = {
     return sql
   },
 
-  join(tables) {
+  join(tables: any[]) {
     let sql = ''
     for (let it of tables) {
       sql += ` JOIN ${it[0]} ON ${it.on} `
@@ -127,7 +127,7 @@ const Parser = {
     return sql
   },
 
-  where(opt) {
+  filter(opt: any) {
     if (typeof opt === 'string') {
       return ` WHERE ${opt} `
     }
@@ -146,12 +146,12 @@ const Parser = {
     return ' '
   },
 
-  select(arr = ['*']) {
+  select(arr: string[] = ['*']) {
     return `SELECT ${arr.join(',')} `
   },
 
   // 排序 ----------------------------------
-  sort(obj = {}) {
+  sort(obj: { [propName: string]: number } = {}) {
     let sort = ''
     for (let i in obj) {
       let c = ''
@@ -167,9 +167,28 @@ const Parser = {
     }
   },
 
-  limit(...args) {
+  limit(...args: number[]) {
     return ` LIMIT ${args.join(',')} `
   }
 }
 
-module.exports = Parser
+export class SqlErr extends Error {
+  sql: string
+  constructor(msg: string = '', sql: string = '') {
+    super(msg)
+    this.sql = sql
+  }
+}
+
+export const defer = () => {
+  let obj: { [prop: string]: any } = {}
+  obj.promise = new Promise((yes, no) => {
+    obj.resolve = yes
+    obj.reject = no
+  })
+  return obj
+}
+
+export { escape }
+
+export default escape

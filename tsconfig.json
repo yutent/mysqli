@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es2015",
+        "lib": ["es2015"],
+        "module": "commonjs",
+        "outDir": "dist/",
+        "noImplicitAny": true,
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "pretty": true,
+        "types" : ["node"],
+        "noEmitOnError": true,
+
+    },
+    "include": ["src/**/*"],
+    
+}

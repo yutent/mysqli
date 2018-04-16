@@ -5,25 +5,17 @@
  *
  */
 'use strict'
-require('es.shim')
+import 'es.shim'
 const mysql = require('mysql')
-const Method = require('./lib/method')
+import Api from './lib/api'
 
-if (!Promise.defer) {
-  Promise.defer = function() {
-    let obj = {}
-    obj.promise = new this((yes, no) => {
-      obj.resolve = yes
-      obj.reject = no
-    })
-    return obj
-  }
-}
 class Mysqli {
+  useSlaveDB: boolean
+  pool: any
   /**
    * [constructor 构造数据库连接池]
    */
-  constructor(config) {
+  constructor(config: any) {
     if (!Array.isArray(config)) {
       config = [config]
     }
@@ -35,7 +27,7 @@ class Mysqli {
       restoreNodeTimeout: 10000
     })
 
-    config.forEach((item, i) => {
+    config.forEach((item: { [prop: string]: any }, i: number) => {
       let {
         host,
         port,
@@ -44,7 +36,8 @@ class Mysqli {
         passwd: password,
         db: database,
         timezone,
-        supportBigNumbers
+        supportBigNumbers,
+        ...others
       } = item
       let name = i < 1 ? 'MASTER' : 'SLAVE' + i
       let collate
@@ -65,20 +58,21 @@ class Mysqli {
         password,
         database,
         timezone,
-        supportBigNumbers
+        supportBigNumbers,
+        ...others
       })
     })
     return this
   }
 
   //对外的escape方法
-  static escape(val) {
+  static escape(val: any) {
     return mysql.escape(val)
   }
 
-  emit(fromSlave = false, db) {
-    const slave = fromSlave && this.useSlaveDB ? 'SLAVE*' : 'MASTER'
-    return new Method(this.pool, slave, db)
+  emit(fromSlave = false, db: string = '') {
+    let slave = fromSlave && this.useSlaveDB ? 'SLAVE*' : 'MASTER'
+    return new Api(this.pool, slave, db)
   }
 }
 
