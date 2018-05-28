@@ -5,17 +5,15 @@
  *
  */
 'use strict'
-import 'es.shim'
+require('es.shim')
 const mysql = require('mysql')
-import Api from './lib/api'
+const Api = require('./lib/api')
 
 class Mysqli {
-  useSlaveDB: boolean
-  pool: any
   /**
    * [constructor 构造数据库连接池]
    */
-  constructor(config: any) {
+  constructor(config) {
     if (!Array.isArray(config)) {
       config = [config]
     }
@@ -27,7 +25,7 @@ class Mysqli {
       restoreNodeTimeout: 10000
     })
 
-    config.forEach((item: { [prop: string]: any }, i: number) => {
+    config.forEach((item, i) => {
       let {
         host,
         port,
@@ -66,11 +64,11 @@ class Mysqli {
   }
 
   //对外的escape方法
-  static escape(val: any) {
+  static escape(val) {
     return mysql.escape(val)
   }
 
-  emit(fromSlave = false, db: string = '') {
+  emit(fromSlave = false, db = '') {
     let slave = fromSlave && this.useSlaveDB ? 'SLAVE*' : 'MASTER'
     return new Api(this.pool, slave, db)
   }

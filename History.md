@@ -1,12 +1,12 @@
 3.0.0 / 2018-04-16
 ==================
-> 这是一个全新的大版本, 不向下兼容2.x, 使用typescript重构。
+> 这是一个全新的大版本, 不向下兼容2.x。
 
   * 重构API, 使用链式操作, 逻辑更加清晰
   * 支持完整的pool option
   * 新增drop方法,支持删除数据库/数据表
   * 新增tableCreate/dbCreate方法, 支持创建数据库/数据表
-  * 新增indexCreate/indexRename/indexDrop/indexList, 支持对索引的增删改查
+  * 新增indexCreate/indexDrop/indexList, 支持对索引的增删改查
 
 
 2.2.2 / 2018-03-22
