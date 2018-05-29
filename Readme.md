@@ -2,19 +2,24 @@
 
 # mysqli
 
-> 本模块基于 node-mysql 模块二次封装，将SQL语法转为类似MongoDB的API。对常用的增删改查提供了简单的API, 并且进行了SQL注入过滤, 对新手非常友好。
+> 本模块基于 node-mysql 模块二次封装，将 SQL 语法转为类似 MongoDB 的 API。对常用的增删改查提供了简单的 API, 并且进行了 SQL 注入过滤, 对新手非常友好。
 
 ## 使用 npm 安装
 
 ```bash
-npm install mysqli
+# 3.x 版的安装
+npm i mysqli
+# or
+npm i mysqli@3.x
+
+
+# 2.x 旧版的安装
+npm i mysqli@2.x
 ```
 
 ## 实例化
 
-> 实例化可以传入一个数组,或单个object配置。只有一个数据库时，默认
-> 是主库 ; 多于 1 个数据库服务时，自动以第 1 个为主库，其他的从库，故实例化时
-> ，`注意顺序`。
+> 实例化可以传入一个数组,或单个 object 配置。只有一个数据库时，默认是主库 ; 多于 1 个数据库服务时，自动以第 1 个为主库，其他的从库，故实例化时，`注意顺序`。
 
 ```javascript
 let Mysqli = require('mysqli')
@@ -50,175 +55,7 @@ let conn = new Mysqli([
 ])
 ```
 
-## API 方法
+## 文档
 
-### 1. escape(val)
-
-> 这是`node-mysql`的内部方法，用于进行 SQL 安全过滤，这里只是做了搬运工，把它暴
-> 露出来给外部调用而已。 **这个是静态方法**
-
-```javascript
-const Mysqli = require('mysqli')
-
-Mysqli.escape('这是文本')
-```
-
-### 2. emit(isSlave, dbName)
-
-* isSlave `<Boolean>` 可选
-* dbName `<String>` 可选。 如果在实例化连接时 , 已经传入 db, 则这里可不传值。
-
-> 触发一个数据库实例 , 可接受 2 个参数 , 第 1 个为 " 是否从库 ", 第 2 个为 " 数
-> 据库名称 "
->  `这一步是必须要的, `
-```javascript
-const Mysqli = require('mysqli')
-let conn = new Mysqli({
-  /*...*/
-})
-let db = conn.emit(true, 'test')
-```
-
-### 3. listDb()
-
-> 顾名思义，该方法即用于列举当前账号权限范围内的所有的数据库名称，返回值是一个数
-> 组 ;
->
-> **注：**`方法返回的是一个 Promise 对象`
-
-```javascript
-db.listDb().then(list => {
-  console.log(list)
-})
-```
-
-### 4. listTable()
-
-> 该方法用于列举当前数据库数据表的集合
-
-```javascript
-db.listTable().then(list => {
-  console.log(list)
-})
-```
-
-### 5. query(sql)
-
-* sql `<String>`
-
-> 该方法用于当内置的方法满足不了需求时，可以自行编写`sql 语句`执行 ; 但要注意防
-> 止`sql 注入`，因为该方法是最基础的方法，模块不对传入的`sql 语句`进行任何的安全
-> 过滤。
-
-```javascript
-// 不使用await指令时，返回的是Promise对象
-db.query(`select * from users limit 10`).then(row => {
-  console.log(row)
-})
-```
-
-### 6. find(condition, select)
-
-* condition `<Object>`, 查询条件
-* select `<Array>`, 要返回字段 , 默认全部返回
-
-> 该方法用于查询多条数据。无论结果是多少条，返回的都是`数组格式`; 详细请看下面代
-> 码示例：
-
-```javascript
-db
-  .find(
-    {
-      table: '', // 要查询的表
-      where: {foo: 'bar', goo: {$like: 'hello%'}}, //条件, 语法类似mongodb
-      sort: {
-        //排序, key是要排序的字段,value是排序方式, 1顺序,-1逆序 【可选】
-        a: 1,
-        b: -1
-      },
-      limit: [0, 1] // 查询范围,可用于分页 【可选】
-    },
-    ['id', 'name'] //要select的字段
-  )
-  .then(row => {
-    console.log(row)
-  })
-```
-
-### 7. findOne(condition)
-
-* condition `<Object>`
-
-> 该方法与上面的`filter`方法的使用一致，区别只是该方法只返回一条数据，且为`json
-> 格式`。
-
-### 8. count(condition)
-
-* condition `<Object>`
-
-> 该方法与上面的`filter`方法的使用一致，不过返回的是条目总数 (`<Number>`)
-
-### 9. insert(condition, doc)
-
-* condition `<Object>`, 插入的条件
-* doc `<Object>`, 插入的数据
-
-> 该方法与上面的`filter`方法的使用类似，手于插入一条数据，具体请看下面代码 ;
->
-> **注：**`该方法一次只能插入一条数据`
-
-```javascript
-// 如果主键是自增ID，则结果返回的是 刚插入的数据的自增ID
-db
-  .insert(
-    {
-      table: 'xx'
-    },
-    { xx: 1234 } //要插入的数据
-  )
-  .then(id => {
-    console.log(id)
-  })
-```
-
-### 10. update(condition, doc)
-
-* condition `<Object>`, 条件
-* doc `<Object>`, 数据
-
-> 该方法与上面的`filter`方法的使用类似，用于更新数据，具体请看下面代码 ; `该方法返
-> 回的是被修改的条目数量`
-
-```javascript
-// 如果修改成功，则返回被修改的数量
-db
-  .update(
-    {
-      table: 'xx'
-    },
-    { xx: 1234 } //要插入的数据
-  )
-  .then(num => {
-    console.log(num)
-  })
-```
-
-### 11. remove(condition)
-
-* condition `<Object>`
-
-> 该方法与上面的`update`方法的使用类似，用于删除指定条件的数据 ; 具体请看下面代码
-> ; `该方法返回的是被删除的条目数量`
-
-```javascript
-// 如果修改成功，返回的是被删除的条目数量
-db
-  .remove(
-    {
-      table: 'xx'
-    }
-  )
-  .then(num => {
-    console.log(num)
-  })
-```
+* [2.x 版文档](docs/2.x.md)
+* [3.x 版文档](docs/3.x.md)
