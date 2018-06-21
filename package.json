@@ -1,6 +1,6 @@
 {
   "name": "mysqli",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "MySQL tool",
   "main": "index.js",
   "dependencies": {
