@@ -1,10 +1,10 @@
 {
   "name": "mysqli",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "MySQL tool",
   "main": "index.js",
   "dependencies": {
-    "es.shim": "^1.0.1",
+    "es.shim": "^1.1.2",
     "mysql": "^2.13.0"
   },
   "repository": "https://github.com/yutent/mysqli.git",

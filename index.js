@@ -40,7 +40,7 @@ class Mysqli {
       let name = i < 1 ? 'MASTER' : 'SLAVE' + i
       let collate
 
-      charset = charset || 'utf8'
+      charset = charset || 'utf8mb4'
       collate =
         charset + (charset === 'utf8mb4' ? '_unicode_ci' : '_general_ci')
 
