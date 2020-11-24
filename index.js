@@ -1,10 +1,9 @@
 /**
  * mysql操作类
- * @authors yutent (yutent@doui.cc)
- * @date    2015-11-24 11:31:55
- *
+ * @author yutent<yutent.io@gmail.com>
+ * @date 2020/11/24 20:04:20
  */
-'use strict'
+
 require('es.shim')
 const mysql = require('mysql')
 const Api = require('./lib/api')
@@ -42,7 +41,7 @@ class Mysqli {
 
       charset = charset || 'utf8mb4'
       collate =
-        charset + (charset === 'utf8mb4' ? '_unicode_ci' : '_general_ci')
+        charset + (charset === 'utf8mb4' ? '_0900_ai_ci' : '_general_ci')
 
       timezone = timezone || 'local'
       supportBigNumbers = !!supportBigNumbers
